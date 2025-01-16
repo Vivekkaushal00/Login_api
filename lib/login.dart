@@ -30,23 +30,61 @@ class _LoginState extends State<Login> {
     if (response.statusCode == 200) {
       loginResponse = LoginResponse.fromJson(response.data);
       print("login token----->${loginResponse.data?.token}");
-      setState(() {});
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('isLoggedIn', true);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Home()),
+      );
+
     } else {
       print(response.statusCode);
     }
   }
 
+  Future<void> logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+  }
+
+  String username = '';
+  String password = '';
+  bool isLoggedIn = false;
+
   Future<void> loginUser(String username, String password) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    bool isLoggedIn = true;
-    prefs.setBool('isLoggedIn', isLoggedIn);
+    prefs.setBool('isLoggedIn', true);
 
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => Home(),)
     );
   }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   checkLoginStatus();
+  // }
+
+  // Future<void> checkLoginStatus() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+  //   });
+  //
+  //   if (isLoggedIn) {
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => Home()),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +125,11 @@ class _LoginState extends State<Login> {
             ),
             ElevatedButton(
                 onPressed: () {
-                  login();
+                  if (isLoggedIn) {
+                    logout();
+                  } else {
+                    login();
+                  }
                 },
                 child: Text('Login')),
           ],
@@ -96,3 +138,6 @@ class _LoginState extends State<Login> {
     );
   }
 }
+
+
+

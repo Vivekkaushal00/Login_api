@@ -1,8 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:login_api/model/home_model/home_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 import 'login.dart';
 
@@ -44,39 +45,42 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> logout() async {
-    SharedPreferences prefs = await SharedPreferences.
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => Login()));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Home'),
-          centerTitle: true,
-          actions: [
-            Padding(
+      appBar: AppBar(
+        title: Text('Home'),
+        centerTitle: true,
+        actions: [
+          Padding(
               padding: const EdgeInsets.only(right: 20),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Login()));
-                },
-                  child: Icon(Icons.logout)),
-            )
-          ],
-        ),
-        body: data.data == null
-            ? Center(child: CircularProgressIndicator())
-            : Padding(
+              child: IconButton(onPressed: () {
+                logout();
+              }, icon: Icon(Icons.logout)))
+        ],
+      ),
+      body: data.data == null
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
               padding: const EdgeInsets.all(10),
               child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Email : ${data.data?.user?.email}'),
                   Text('Full name : ${data.data?.user?.fullName}'),
                 ],
-                  ),
+              ),
             ),
     );
   }
 }
+
+
+

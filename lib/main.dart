@@ -17,20 +17,19 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       home: FutureBuilder(future: checkLoginStatus(), builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if(snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
-        } if (snapshot.data == true){
+        } if (snapshot.data == true) {
           return Home();
         } else {
           return Login();
         }
-      },),
+      },)
     );
   }
-
   Future<bool> checkLoginStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('isLoggedIn') ?? false;
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getBool('isLoggedIn') ?? false;
   }
 }
 
